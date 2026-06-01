@@ -36,15 +36,18 @@ const routes = {
 
 export function resolvePath(req) {
   const q = req.query?.path
-  if (Array.isArray(q)) return q.join('/')
-  if (typeof q === 'string' && q) return q
+  if (Array.isArray(q)) return q.filter(Boolean).join('/')
+  if (typeof q === 'string' && q) return q.replace(/^\/+|\/+$/g, '')
 
   try {
     const pathname = new URL(req.url || '/', 'http://localhost').pathname
-    return pathname.replace(/^\/api\/?/, '').replace(/\/$/, '')
+    const fromUrl = pathname.replace(/^\/api\/?/, '').replace(/\/$/, '')
+    if (fromUrl) return fromUrl
   } catch {
-    return ''
+    /* ignore */
   }
+
+  return ''
 }
 
 export async function dispatch(req, res) {

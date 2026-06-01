@@ -56,7 +56,9 @@ Her soruda değeri yapıştırın; Production + Preview + Development işaretley
 
 ## Vercel Hobby: 12 function limiti
 
-Her `api/*.js` dosyası ayrı bir Serverless Function sayılır (limit: 12). Bu proje tüm API'yi **tek** dosyada toplar: `api/[[...path]].js`. URL'ler değişmez (`/api/health`, `/api/auth/login`, …).
+Her `api/*.js` dosyası ayrı bir Serverless Function sayılır (limit: 12). Bu proje tüm API'yi **tek** dosyada toplar: `api/index.js` + `vercel.json` rewrite. URL'ler değişmez (`/api/health`, `/api/auth/login`, …).
+
+**Canlıda kayıt/giriş çalışmıyorsa:** Vercel → Settings → Environment Variables → Production'da `DATABASE_URL` ve `JWT_SECRET` tanımlı mı? Sonra Redeploy.
 
 ## Canlı deploy
 

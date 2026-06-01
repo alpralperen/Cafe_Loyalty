@@ -2,14 +2,31 @@ const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
 async function request(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers }
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
-  const data = await res.json().catch(() => ({}))
+  let res
+  try {
+    res = await fetch(`${API_BASE}${path}`, { ...options, headers })
+  } catch {
+    throw new Error('Sunucuya bağlanılamadı. İnternet veya API adresini kontrol edin.')
+  }
+
+  const contentType = res.headers.get('content-type') || ''
+  const data = contentType.includes('application/json')
+    ? await res.json().catch(() => ({}))
+    : {}
+
   if (!res.ok) {
-    const err = new Error(data.error || 'İstek başarısız')
+    const err = new Error(
+      data.error || (res.status === 404 ? 'API bulunamadı (deploy ayarı)' : `İstek başarısız (${res.status})`)
+    )
     err.status = res.status
     err.data = data
     throw err
   }
+
+  if (!contentType.includes('application/json')) {
+    throw new Error('API yanıt vermedi (HTML döndü — Vercel rewrite kontrol edin)')
+  }
+
   return data
 }
 
