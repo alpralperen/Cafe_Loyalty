@@ -1,28 +1,30 @@
 <template>
   <div>
-    <section class="hero card">
-      <h1>Dijital Sadakat Kartınız</h1>
+    <section class="card card-highlight hero">
+      <p class="page-eyebrow">Dijital sadakat</p>
+      <h1>Kahveniz,<br />çekirdekleriniz.</h1>
       <p class="muted">
-        Fiziksel kart yok — telefonunuzla çekirdek biriktirin, ücretsiz kahve kazanın.
+        Kart taşımadan biriktirin. Her 10 çekirdekte bir fincan bizden.
       </p>
       <div class="chip-row">
-        <span class="chip">&lt; 1 dk kayıt</span>
-        <span class="chip">Tek kullanımlık QR</span>
-        <span class="chip">Kasiyer dostu</span>
+        <span class="chip">30 sn kayıt</span>
+        <span class="chip">Güvenli QR</span>
+        <span class="chip">Uygulama yok</span>
       </div>
-      <router-link v-if="!auth.isLoggedIn" to="/kayit" class="btn btn-primary" style="margin-top: 1.25rem">
-        Hemen Kayıt Ol
+      <router-link v-if="!auth.isLoggedIn" to="/kayit" class="btn btn-primary" style="margin-top: 1.5rem">
+        Başla
       </router-link>
-      <router-link v-else to="/panel" class="btn btn-primary" style="margin-top: 1.25rem">
-        Panelime Git
+      <router-link v-else to="/panel" class="btn btn-primary" style="margin-top: 1.5rem">
+        Panelime git
       </router-link>
     </section>
 
     <section v-if="announcements.length" class="card">
-      <h2>Duyurular</h2>
-      <article v-for="a in announcements" :key="a.id" style="margin-bottom: 1rem">
-        <strong>{{ a.title }}</strong>
-        <p class="muted" style="margin: 0.35rem 0 0">{{ a.content }}</p>
+      <p class="page-eyebrow">Kafeden</p>
+      <h2 class="page-title" style="font-size: 1.25rem; margin-bottom: 1rem">Duyurular</h2>
+      <article v-for="a in announcements" :key="a.id" class="announcement">
+        <h3>{{ a.title }}</h3>
+        <p class="muted">{{ a.content }}</p>
       </article>
     </section>
   </div>

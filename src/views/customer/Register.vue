@@ -1,27 +1,31 @@
 <template>
-  <div class="card">
-    <h2>Kayıt Ol</h2>
-    <p class="muted">1 dakikadan kısa — ad, telefon ve şifre yeterli.</p>
-    <div v-if="error" class="alert alert-error">{{ error }}</div>
-    <form @submit.prevent="submit">
-      <label>Ad Soyad</label>
-      <input v-model="form.name_surname" required placeholder="Ayşe Yılmaz" />
-      <label>Telefon</label>
-      <input v-model="form.phone" type="tel" required placeholder="05xx xxx xx xx" />
-      <label>E-posta (isteğe bağlı)</label>
-      <input v-model="form.email" type="email" placeholder="ornek@mail.com" />
-      <label>Şifre</label>
-      <input v-model="form.password" type="password" required minlength="6" />
-      <button class="btn btn-primary" type="submit" :disabled="loading">
-        {{ loading ? 'Kaydediliyor…' : 'Kayıt Ol' }}
-      </button>
-    </form>
-    <p class="muted" style="text-align: center; margin-top: 1rem">
-      Google / iCloud ile giriş — V2 yol haritasında eklenecek.
-    </p>
-    <router-link to="/giris" class="muted" style="display: block; text-align: center">
-      Zaten hesabınız var mı? Giriş yapın
-    </router-link>
+  <div>
+    <header style="margin-bottom: 1.25rem">
+      <p class="page-eyebrow">Aramıza katıl</p>
+      <h1 class="page-title">Kayıt ol</h1>
+      <p class="muted" style="margin-top: 0.35rem">Bir dakikadan kısa sürer.</p>
+    </header>
+
+    <div class="card">
+      <div v-if="error" class="alert alert-error">{{ error }}</div>
+      <form @submit.prevent="submit">
+        <label>Ad soyad</label>
+        <input v-model="form.name_surname" required placeholder="Ayşe Yılmaz" autocomplete="name" />
+        <label>Telefon</label>
+        <input v-model="form.phone" type="tel" required placeholder="05xx xxx xx xx" autocomplete="tel" />
+        <label>E-posta <span class="muted" style="text-transform: none; letter-spacing: 0">(isteğe bağlı)</span></label>
+        <input v-model="form.email" type="email" placeholder="ornek@mail.com" autocomplete="email" />
+        <label>Şifre</label>
+        <input v-model="form.password" type="password" required minlength="6" autocomplete="new-password" />
+        <button class="btn btn-primary" type="submit" :disabled="loading">
+          {{ loading ? 'Kaydediliyor…' : 'Hesap oluştur' }}
+        </button>
+      </form>
+      <p class="muted" style="text-align: center; margin-top: 1rem; font-size: 0.8rem">
+        Google / iCloud — yakında
+      </p>
+      <router-link to="/giris" class="text-link">Zaten üye misiniz? Giriş yapın</router-link>
+    </div>
   </div>
 </template>
 

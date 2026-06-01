@@ -1,8 +1,9 @@
 <template>
-  <div class="admin-shell">
-    <header class="admin-header">
+  <div class="page-admin">
+    <header class="admin-top">
       <router-link to="/" class="back-link">← Ana sayfa</router-link>
-      <h1>Kasiyer / Admin</h1>
+      <span class="admin-badge">Kasiyer</span>
+      <h1 class="page-title">İşlem paneli</h1>
     </header>
 
     <div v-if="!auth.adminToken" class="card">
@@ -13,9 +14,9 @@
         <input v-model="loginForm.username" required autocomplete="username" />
         <label>Şifre</label>
         <input v-model="loginForm.password" type="password" required autocomplete="current-password" />
-        <button class="btn btn-primary" type="submit" :disabled="loading">Giriş Yap</button>
+        <button class="btn btn-primary" type="submit" :disabled="loading">Giriş yap</button>
       </form>
-      <p class="muted">Varsayılan: admin / admin123 (kurulum sonrası değiştirin)</p>
+      <p class="muted" style="margin-top: 1rem; font-size: 0.8rem">Kurulum sonrası şifrenizi değiştirin.</p>
     </div>
 
     <template v-else>
@@ -24,55 +25,61 @@
       </div>
 
       <div class="card">
-        <p class="muted">Hoş geldin, {{ auth.admin?.display_name }}</p>
+        <p class="muted" style="margin: 0 0 0.75rem">{{ auth.admin?.display_name }}</p>
         <div class="stat-grid">
           <div class="stat-box">
             <div class="value">{{ stats?.qr_today ?? 0 }}</div>
             <div class="label">Bugün QR</div>
           </div>
-          <div class="stat-box">
+          <div class="stat-box accent">
             <div class="value">{{ stats?.beans_today ?? 0 }}</div>
-            <div class="label">Dağıtılan çekirdek</div>
+            <div class="label">Çekirdek</div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h2>Çekirdek QR Oluştur</h2>
+        <p class="page-eyebrow">Kazanma</p>
+        <h2>Çekirdek QR</h2>
         <label>Kahve adedi</label>
         <input v-model.number="beansAmount" type="number" min="1" max="20" />
         <button class="btn btn-primary" :disabled="creating" @click="createQr">
-          {{ creating ? 'Oluşturuluyor…' : 'QR Oluştur' }}
+          {{ creating ? 'Oluşturuluyor…' : 'QR oluştur' }}
         </button>
-        <div v-if="earnToken" style="margin-top: 1rem">
-          <p class="muted">Müşteri bu kodu tarasın ({{ earnTtl }} sn geçerli, tek kullanımlık)</p>
+        <div v-if="earnToken" class="divider"></div>
+        <div v-if="earnToken">
+          <p class="qr-frame-label">{{ earnTtl }} sn geçerli · tek kullanımlık</p>
           <QrDisplay :value="earnToken" />
         </div>
       </div>
 
       <div class="card">
-        <h2>Ücretsiz Kahve Tarat</h2>
-        <p class="muted">Müşterinin "Kahvemi Kullan" ekranındaki QR'ı okutun.</p>
+        <p class="page-eyebrow">Ödül</p>
+        <h2>Ücretsiz kahve</h2>
+        <p class="muted">Müşteri panelindeki QR kodu taratın.</p>
         <div v-if="redeemMsg" class="alert alert-success">{{ redeemMsg }}</div>
         <div v-if="redeemErr" class="alert alert-error">{{ redeemErr }}</div>
         <QrScanner v-if="scanRedeem" hint="Müşteri QR kodunu taratın" @scan="onRedeemScan" />
-        <button v-else class="btn btn-accent" @click="scanRedeem = true">Kamerayı Aç</button>
-        <button v-if="scanRedeem" class="btn btn-outline" style="margin-top: 0.5rem" @click="scanRedeem = false">
+        <div v-else class="btn-stack">
+          <button class="btn btn-accent" @click="scanRedeem = true">Kamerayı aç</button>
+        </div>
+        <button v-if="scanRedeem" class="btn btn-outline" style="margin-top: 0.65rem" @click="scanRedeem = false">
           İptal
         </button>
       </div>
 
       <div class="card">
+        <p class="page-eyebrow">Müşterilere</p>
         <h2>Duyurular</h2>
         <label>Başlık</label>
         <input v-model="annForm.title" />
         <label>İçerik</label>
         <textarea v-model="annForm.content" rows="3"></textarea>
-        <button class="btn btn-primary" @click="saveAnnouncement">Yeni Duyuru Ekle</button>
-        <div v-for="a in announcements" :key="a.id" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #eee">
-          <strong>{{ a.title }}</strong>
+        <button class="btn btn-primary" @click="saveAnnouncement">Yayınla</button>
+        <div v-for="a in announcements" :key="a.id" class="announcement">
+          <h3>{{ a.title }}</h3>
           <p class="muted">{{ a.content }}</p>
-          <button class="btn btn-outline" style="width: auto; padding: 0.4rem 0.8rem" @click="toggleAnnouncement(a)">
+          <button class="btn btn-outline btn-sm" @click="toggleAnnouncement(a)">
             {{ a.is_active ? 'Pasif yap' : 'Aktif yap' }}
           </button>
         </div>
@@ -185,25 +192,3 @@ onMounted(() => {
   if (auth.adminToken) loadAdminData().catch(() => auth.logoutAdmin())
 })
 </script>
-
-<style scoped>
-.admin-shell {
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.admin-header {
-  margin-bottom: 1rem;
-}
-
-.admin-header h1 {
-  margin: 0.25rem 0 0;
-  font-size: 1.35rem;
-}
-
-.back-link {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-</style>

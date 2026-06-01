@@ -1,11 +1,17 @@
 <template>
-  <div class="card">
-    <h2>Çekirdek QR Tara</h2>
-    <p class="muted">Kasiyerin oluşturduğu tek kullanımlık kodu tarayın.</p>
-    <div v-if="error" class="alert alert-error">{{ error }}</div>
-    <div v-if="success" class="alert alert-success">{{ success }}</div>
-    <QrScanner v-if="!success" @scan="onScan" />
-    <router-link to="/panel" class="btn btn-outline" style="margin-top: 1rem">Panele dön</router-link>
+  <div>
+    <header style="margin-bottom: 1.25rem">
+      <p class="page-eyebrow">Kasadaki kod</p>
+      <h1 class="page-title">QR tara</h1>
+      <p class="muted" style="margin-top: 0.35rem">Tek kullanımlık çekirdek kodunu okutun.</p>
+    </header>
+
+    <div class="card">
+      <div v-if="error" class="alert alert-error">{{ error }}</div>
+      <div v-if="success" class="alert alert-success">{{ success }}</div>
+      <QrScanner v-if="!success" hint="QR kodu çerçeveye hizalayın" @scan="onScan" />
+      <router-link to="/panel" class="btn btn-outline" style="margin-top: 1rem">Panele dön</router-link>
+    </div>
   </div>
 </template>
 

@@ -1,20 +1,26 @@
 <template>
   <div>
-    <div class="card">
-      <h2>Merhaba, {{ profile?.name_surname?.split(' ')[0] || 'Misafir' }}</h2>
-      <div class="stat-grid">
+    <header style="margin-bottom: 1.25rem">
+      <p class="page-eyebrow">Hoş geldin</p>
+      <h1 class="page-title">{{ firstName }}</h1>
+    </header>
+
+    <div class="card card-highlight">
+      <div class="stat-grid" style="margin-bottom: 0.5rem">
         <div class="stat-box">
           <div class="value">{{ profile?.beans_count ?? 0 }}</div>
           <div class="label">Çekirdek</div>
         </div>
-        <div class="stat-box">
+        <div class="stat-box accent">
           <div class="value">{{ profile?.free_coffees ?? 0 }}</div>
-          <div class="label">Ücretsiz kahve</div>
+          <div class="label">Ücretsiz</div>
         </div>
       </div>
-      <p class="muted" style="margin-top: 0.75rem; text-align: center">
-        Ücretsiz kahveye {{ beansUntilFree }} çekirdek kaldı (10 çekirdek = 1 kahve)
-      </p>
+      <BeanProgress
+        :current="beansInCycle"
+        :total="10"
+        :label="`${beansUntilFree} çekirdek kaldı — 10’da 1 kahve`"
+      />
     </div>
 
     <div v-if="message" class="alert alert-success">{{ message }}</div>
@@ -22,17 +28,18 @@
 
     <div class="card">
       <h2>İşlemler</h2>
-      <router-link to="/tara" class="btn btn-primary" style="margin-bottom: 0.75rem">
-        QR Tara (Çekirdek Kazan)
-      </router-link>
-      <button class="btn btn-accent" :disabled="!profile?.free_coffees" @click="useCoffee">
-        Kahvemi Kullan
-      </button>
+      <div class="btn-stack">
+        <router-link to="/tara" class="btn btn-primary">QR tara — çekirdek kazan</router-link>
+        <button class="btn btn-accent" :disabled="!profile?.free_coffees" @click="useCoffee">
+          Kahvemi kullan
+        </button>
+      </div>
     </div>
 
-    <div v-if="redeemToken" class="card">
-      <h2>Kasiyere Gösterin</h2>
-      <p class="muted">Bu kod {{ redeemTtl }} sn geçerlidir.</p>
+    <div v-if="redeemToken" class="card card-highlight">
+      <p class="page-eyebrow">Kasiyere gösterin</p>
+      <h2 style="margin-bottom: 0.35rem">Ücretsiz kahve QR</h2>
+      <p class="muted qr-frame-label">{{ redeemTtl }} saniye geçerli</p>
       <QrDisplay :value="redeemToken" label="Ücretsiz kahve QR" />
     </div>
 
@@ -45,14 +52,15 @@
       </div>
     </div>
 
-    <button class="btn btn-outline" @click="logout">Çıkış</button>
+    <button class="btn btn-outline" @click="logout">Çıkış yap</button>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import QrDisplay from '../../components/QrDisplay.vue'
+import BeanProgress from '../../components/BeanProgress.vue'
 import { api } from '../../api/client'
 import { useAuthStore } from '../../stores/auth'
 
@@ -66,8 +74,19 @@ const error = ref('')
 const redeemToken = ref('')
 const redeemTtl = ref(120)
 
+const firstName = computed(
+  () => profile.value?.name_surname?.split(' ')[0] || 'Misafir'
+)
+
+const beansInCycle = computed(() => (profile.value?.beans_count ?? 0) % 10)
+
 function formatDate(d) {
-  return new Date(d).toLocaleString('tr-TR')
+  return new Date(d).toLocaleString('tr-TR', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 async function refresh() {
@@ -86,7 +105,7 @@ async function useCoffee() {
     const data = await api.redeemRequest(auth.userToken)
     redeemToken.value = data.token
     redeemTtl.value = data.expires_in_seconds
-    message.value = 'QR kodunuz hazır — kasiyere gösterin.'
+    message.value = 'QR hazır — kasiyere gösterin.'
     await refresh()
   } catch (e) {
     error.value = e.message

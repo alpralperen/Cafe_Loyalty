@@ -4,8 +4,8 @@
   "description": "Dijital kafe sadakat kartı",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf6f1",
-  "theme_color": "#4a3728",
+  "background_color": "#f6f0e8",
+  "theme_color": "#1c1612",
   "lang": "tr",
   "icons": [
     {

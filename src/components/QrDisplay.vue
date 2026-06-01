@@ -21,7 +21,7 @@ async function render() {
   dataUrl.value = await QRCode.toDataURL(props.value, {
     width: 220,
     margin: 2,
-    color: { dark: '#4a3728', light: '#ffffff' }
+    color: { dark: '#1c1612', light: '#fffdf9' }
   })
 }
 
