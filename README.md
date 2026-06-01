@@ -19,6 +19,8 @@ Dijital kafe sadakat sistemi — Vue 3 PWA arayüzü, Vercel serverless API ve N
 
 ## Kurulum
 
+Windows ve `vercel dev` sorunları için: **[KURULUM.md](./KURULUM.md)**
+
 ### 1. Bağımlılıklar
 
 ```bash
