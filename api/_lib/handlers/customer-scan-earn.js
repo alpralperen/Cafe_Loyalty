@@ -1,10 +1,9 @@
-import { getDb } from '../_lib/db.js'
-import { requireUser } from '../_lib/auth.js'
-import { applyBeans } from '../_lib/beans.js'
-import { json, readBody, handleOptions, methodNotAllowed } from '../_lib/http.js'
+import { getDb } from '../db.js'
+import { requireUser } from '../auth.js'
+import { applyBeans } from '../beans.js'
+import { json, readBody, methodNotAllowed } from '../http.js'
 
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function customerScanEarn(req, res) {
   if (req.method !== 'POST') return methodNotAllowed(res)
 
   const auth = requireUser(req)

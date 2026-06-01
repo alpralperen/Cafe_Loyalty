@@ -1,10 +1,9 @@
 import bcrypt from 'bcryptjs'
-import { getDb } from '../_lib/db.js'
-import { signAdminToken } from '../_lib/auth.js'
-import { json, readBody, handleOptions, methodNotAllowed } from '../_lib/http.js'
+import { getDb } from '../db.js'
+import { signAdminToken } from '../auth.js'
+import { json, readBody, methodNotAllowed } from '../http.js'
 
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function adminLogin(req, res) {
   if (req.method !== 'POST') return methodNotAllowed(res)
 
   const { username, password } = await readBody(req)

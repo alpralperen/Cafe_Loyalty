@@ -1,11 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
-import { getDb } from '../_lib/db.js'
-import { requireUser } from '../_lib/auth.js'
-import { REDEEM_QR_TTL_MINUTES } from '../_lib/config.js'
-import { json, handleOptions, methodNotAllowed } from '../_lib/http.js'
+import { getDb } from '../db.js'
+import { requireUser } from '../auth.js'
+import { REDEEM_QR_TTL_MINUTES } from '../config.js'
+import { json, methodNotAllowed } from '../http.js'
 
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function customerRedeemRequest(req, res) {
   if (req.method !== 'POST') return methodNotAllowed(res)
 
   const auth = requireUser(req)

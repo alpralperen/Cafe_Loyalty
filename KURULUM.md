@@ -54,6 +54,10 @@ vercel env add JWT_SECRET
 
 Her soruda değeri yapıştırın; Production + Preview + Development işaretleyin.
 
+## Vercel Hobby: 12 function limiti
+
+Her `api/*.js` dosyası ayrı bir Serverless Function sayılır (limit: 12). Bu proje tüm API'yi **tek** dosyada toplar: `api/[[...path]].js`. URL'ler değişmez (`/api/health`, `/api/auth/login`, …).
+
 ## Canlı deploy
 
 ```powershell

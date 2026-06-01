@@ -1,8 +1,7 @@
-import { getDb } from '../_lib/db.js'
-import { json, handleOptions, methodNotAllowed } from '../_lib/http.js'
+import { getDb } from '../db.js'
+import { json, methodNotAllowed } from '../http.js'
 
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function announcementsPublic(req, res) {
   if (req.method !== 'GET') return methodNotAllowed(res)
 
   const sql = getDb()

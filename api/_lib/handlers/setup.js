@@ -1,10 +1,8 @@
 import bcrypt from 'bcryptjs'
-import { getDb } from './_lib/db.js'
-import { json, readBody, handleOptions, methodNotAllowed } from './_lib/http.js'
+import { getDb } from '../db.js'
+import { json, readBody, methodNotAllowed } from '../http.js'
 
-/** İlk kurulum: SETUP_SECRET ile şema + varsayılan admin oluşturur */
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function setup(req, res) {
   if (req.method !== 'POST') return methodNotAllowed(res)
 
   const secret = process.env.SETUP_SECRET

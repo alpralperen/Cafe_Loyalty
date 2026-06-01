@@ -1,9 +1,8 @@
-import { getDb } from '../_lib/db.js'
-import { requireUser } from '../_lib/auth.js'
-import { json, handleOptions, methodNotAllowed } from '../_lib/http.js'
+import { getDb } from '../db.js'
+import { requireUser } from '../auth.js'
+import { json, methodNotAllowed } from '../http.js'
 
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function customerHistory(req, res) {
   if (req.method !== 'GET') return methodNotAllowed(res)
 
   const auth = requireUser(req)

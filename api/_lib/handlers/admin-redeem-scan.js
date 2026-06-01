@@ -1,9 +1,8 @@
-import { getDb } from '../_lib/db.js'
-import { requireAdmin } from '../_lib/auth.js'
-import { json, readBody, handleOptions, methodNotAllowed } from '../_lib/http.js'
+import { getDb } from '../db.js'
+import { requireAdmin } from '../auth.js'
+import { json, readBody, methodNotAllowed } from '../http.js'
 
-export default async function handler(req, res) {
-  if (handleOptions(req, res)) return
+export async function adminRedeemScan(req, res) {
   if (req.method !== 'POST') return methodNotAllowed(res)
 
   const auth = requireAdmin(req)
