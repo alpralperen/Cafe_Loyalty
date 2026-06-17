@@ -50,7 +50,7 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     }),
   customerQrStatus: (token, id) =>
-    request(`/customer/qr-status?id=${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+    request(`/customer/qr-status?id=${id}&_t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` } }),
   publicAnnouncements: () => request('/announcements/public'),
   adminLogin: (body) => request('/admin/login', { method: 'POST', body: JSON.stringify(body) }),
   adminStats: (token) =>
@@ -62,7 +62,7 @@ export const api = {
       body: JSON.stringify({ beans_amount })
     }),
   adminQrStatus: (token, id) =>
-    request(`/admin/qr-status?id=${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+    request(`/admin/qr-status?id=${id}&_t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` } }),
   adminRedeemScan: (token, qrToken) =>
     request('/admin/redeem-scan', {
       method: 'POST',
