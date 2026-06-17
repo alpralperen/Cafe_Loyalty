@@ -66,8 +66,10 @@ const beansUntilFree = ref(10)
 const logs = ref([])
 const message = ref('')
 const error = ref('')
+const error = ref('')
 const redeemToken = ref('')
 const redeemTtl = ref(120)
+let pollInterval = null
 
 const firstName = computed(
   () => profile.value?.name_surname?.split(' ')[0] || 'Misafir'
@@ -102,13 +104,32 @@ async function useCoffee() {
     redeemTtl.value = data.expires_in_seconds
     message.value = 'QR hazır — kasiyere gösterin.'
     await refresh()
+    startPolling(data.token)
   } catch (e) {
     error.value = e.message
   }
 }
 
+function startPolling(tokenId) {
+  if (pollInterval) clearInterval(pollInterval)
+  pollInterval = setInterval(async () => {
+    try {
+      const res = await api.customerQrStatus(auth.userToken, tokenId)
+      if (res.status === 'used') {
+        clearInterval(pollInterval)
+        redeemToken.value = ''
+        message.value = 'Ücretsiz kahvenizi afiyetle için!'
+        await refresh()
+      }
+    } catch (e) {
+      // ignore errors during polling
+    }
+  }, 2500)
+}
+
 function logout() {
   auth.logoutUser()
+  if (pollInterval) clearInterval(pollInterval)
   router.push('/')
 }
 
@@ -119,5 +140,10 @@ onMounted(async () => {
     auth.logoutUser()
     router.push('/giris')
   }
+})
+
+import { onUnmounted } from 'vue'
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval)
 })
 </script>

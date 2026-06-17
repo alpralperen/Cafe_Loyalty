@@ -6,6 +6,7 @@ import { customerMe } from './handlers/customer-me.js'
 import { customerHistory } from './handlers/customer-history.js'
 import { customerScanEarn } from './handlers/customer-scan-earn.js'
 import { customerRedeemRequest } from './handlers/customer-redeem-request.js'
+import { customerQrStatus } from './handlers/customer-qr-status.js'
 import { adminLogin } from './handlers/admin-login.js'
 import { adminQrCreate } from './handlers/admin-qr-create.js'
 import { adminRedeemScan } from './handlers/admin-redeem-scan.js'
@@ -26,6 +27,7 @@ const routes = {
   'GET customer/history': customerHistory,
   'POST customer/scan-earn': customerScanEarn,
   'POST customer/redeem-request': customerRedeemRequest,
+  'GET customer/qr-status': customerQrStatus,
   'POST admin/login': adminLogin,
   'POST admin/qr-create': adminQrCreate,
   'POST admin/redeem-scan': adminRedeemScan,
