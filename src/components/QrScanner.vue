@@ -1,7 +1,8 @@
 <template>
   <div>
     <div :id="elementId" class="scanner-box"></div>
-    <p v-if="hint" class="muted" style="text-align: center; margin-top: 0.5rem">{{ hint }}</p>
+    <p v-if="hint && !errorMsg" class="muted" style="text-align: center; margin-top: 0.5rem">{{ hint }}</p>
+    <p v-if="errorMsg" class="alert alert-error" style="margin-top: 0.5rem; text-align: center;">{{ errorMsg }}</p>
   </div>
 </template>
 
@@ -16,6 +17,7 @@ const props = defineProps({
 const emit = defineEmits(['scan'])
 const elementId = `qr-scanner-${Math.random().toString(36).slice(2)}`
 const scanner = ref(null)
+const errorMsg = ref('')
 let handled = false
 
 onMounted(async () => {
@@ -34,6 +36,7 @@ onMounted(async () => {
     )
   } catch (e) {
     console.error(e)
+    errorMsg.value = 'Kamera açılamadı. Lütfen tarayıcı izinlerini kontrol edin veya kamerayı destekleyen güvenli (HTTPS) bir bağlantı kullanın.'
   }
 })
 

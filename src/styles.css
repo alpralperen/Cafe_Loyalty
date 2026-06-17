@@ -522,3 +522,49 @@ select:focus {
   background: var(--border);
   margin: 1rem 0;
 }
+
+/* —— Custom UI Appends —— */
+.with-bottom-nav {
+  padding-bottom: 90px;
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.auth-logo {
+  width: 48px;
+  height: 48px;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.top-bar-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.top-bar-custom .greeting {
+  font-size: 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+}
+
+.top-bar-custom .mini-logo {
+  width: 32px;
+  height: 32px;
+  color: var(--ink);
+}

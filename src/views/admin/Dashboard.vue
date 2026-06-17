@@ -1,42 +1,15 @@
 <template>
   <div class="page-admin">
-    <header class="admin-top">
-      <router-link to="/" class="back-link">← Ana sayfa</router-link>
-      <span class="admin-badge">Kasiyer</span>
-      <h1 class="page-title">İşlem paneli</h1>
+    <header class="auth-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 2rem; margin-top: 1rem;">
+      <AppLogo style="transform: scale(1.6);" />
+      <h2 style="margin-top: 1.5rem; font-size: 1.25rem;">Merhaba, {{ auth.admin?.display_name }}</h2>
     </header>
 
-    <div v-if="!auth.adminToken" class="card">
-      <h2>Giriş</h2>
-      <div v-if="error" class="alert alert-error">{{ error }}</div>
-      <form @submit.prevent="login">
-        <label>Kullanıcı adı</label>
-        <input v-model="loginForm.username" required autocomplete="username" />
-        <label>Şifre</label>
-        <input v-model="loginForm.password" type="password" required autocomplete="current-password" />
-        <button class="btn btn-primary" type="submit" :disabled="loading">Giriş yap</button>
-      </form>
-      <p class="muted" style="margin-top: 1rem; font-size: 0.8rem">Kurulum sonrası şifrenizi değiştirin.</p>
-    </div>
-
-    <template v-else>
+    <div>
       <div v-if="warnings.length" class="alert alert-warn">
         <div v-for="(w, i) in warnings" :key="i">{{ w }}</div>
       </div>
 
-      <div class="card">
-        <p class="muted" style="margin: 0 0 0.75rem">{{ auth.admin?.display_name }}</p>
-        <div class="stat-grid">
-          <div class="stat-box">
-            <div class="value">{{ stats?.qr_today ?? 0 }}</div>
-            <div class="label">Bugün QR</div>
-          </div>
-          <div class="stat-box accent">
-            <div class="value">{{ stats?.beans_today ?? 0 }}</div>
-            <div class="label">Çekirdek</div>
-          </div>
-        </div>
-      </div>
 
       <div class="card">
         <p class="page-eyebrow">Kazanma</p>
@@ -46,6 +19,7 @@
         <button class="btn btn-primary" :disabled="creating" @click="createQr">
           {{ creating ? 'Oluşturuluyor…' : 'QR oluştur' }}
         </button>
+        <div v-if="scanSuccessMsg" class="alert alert-success" style="margin-top:1rem;">{{ scanSuccessMsg }}</div>
         <div v-if="earnToken" class="divider"></div>
         <div v-if="earnToken">
           <p class="qr-frame-label">{{ earnTtl }} sn geçerli · tek kullanımlık</p>
@@ -71,12 +45,8 @@
       <div class="card">
         <p class="page-eyebrow">Müşterilere</p>
         <h2>Duyurular</h2>
-        <label>Başlık</label>
-        <input v-model="annForm.title" />
-        <label>İçerik</label>
-        <textarea v-model="annForm.content" rows="3"></textarea>
-        <button class="btn btn-primary" @click="saveAnnouncement">Yayınla</button>
-        <div v-for="a in announcements" :key="a.id" class="announcement">
+        <div v-if="announcements.length === 0" class="muted" style="margin-top: 1rem;">Kayıtlı duyuru bulunmuyor.</div>
+        <div v-for="a in announcements" :key="a.id" class="announcement" style="margin-top: 1rem;">
           <h3>{{ a.title }}</h3>
           <p class="muted">{{ a.content }}</p>
           <button class="btn btn-outline btn-sm" @click="toggleAnnouncement(a)">
@@ -86,22 +56,23 @@
       </div>
 
       <button class="btn btn-outline" @click="logoutAdmin">Çıkış</button>
-    </template>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import AppLogo from '../../components/AppLogo.vue'
 import QrDisplay from '../../components/QrDisplay.vue'
 import QrScanner from '../../components/QrScanner.vue'
 import { api } from '../../api/client'
 import { useAuthStore } from '../../stores/auth'
 
+const router = useRouter()
 const auth = useAuthStore()
-const loading = ref(false)
 const creating = ref(false)
 const error = ref('')
-const loginForm = reactive({ username: 'admin', password: '' })
 const beansAmount = ref(1)
 const earnToken = ref('')
 const earnTtl = ref(300)
@@ -111,22 +82,10 @@ const scanRedeem = ref(false)
 const redeemMsg = ref('')
 const redeemErr = ref('')
 const announcements = ref([])
-const annForm = reactive({ title: '', content: '' })
+const scanSuccessMsg = ref('')
+let pollInterval = null
 let redeemBusy = false
 
-async function login() {
-  loading.value = true
-  error.value = ''
-  try {
-    const data = await api.adminLogin(loginForm)
-    auth.setAdminSession(data.token, data.admin)
-    await loadAdminData()
-  } catch (e) {
-    error.value = e.message
-  } finally {
-    loading.value = false
-  }
-}
 
 async function loadAdminData() {
   const s = await api.adminStats(auth.adminToken)
@@ -138,17 +97,37 @@ async function loadAdminData() {
 async function createQr() {
   creating.value = true
   warnings.value = []
+  scanSuccessMsg.value = ''
+  if (pollInterval) clearInterval(pollInterval)
   try {
     const data = await api.adminQrCreate(auth.adminToken, beansAmount.value)
     earnToken.value = data.token
     earnTtl.value = data.expires_in_seconds
     warnings.value = data.warnings || []
     stats.value = data.daily_stats
+    startPolling(data.token)
   } catch (e) {
     error.value = e.message
   } finally {
     creating.value = false
   }
+}
+
+function startPolling(tokenId) {
+  if (pollInterval) clearInterval(pollInterval)
+  pollInterval = setInterval(async () => {
+    try {
+      const res = await api.adminQrStatus(auth.adminToken, tokenId)
+      if (res.status === 'used') {
+        clearInterval(pollInterval)
+        earnToken.value = ''
+        scanSuccessMsg.value = `Müşteri başarıyla taradı! (${res.beans_amount} çekirdek eklendi)`
+        await loadAdminData()
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, 2500)
 }
 
 async function onRedeemScan(token) {
@@ -167,13 +146,6 @@ async function onRedeemScan(token) {
   }
 }
 
-async function saveAnnouncement() {
-  await api.adminAnnouncements(auth.adminToken, 'POST', annForm)
-  annForm.title = ''
-  annForm.content = ''
-  await loadAdminData()
-}
-
 async function toggleAnnouncement(a) {
   await api.adminAnnouncements(auth.adminToken, 'PUT', {
     id: a.id,
@@ -186,9 +158,20 @@ function logoutAdmin() {
   auth.logoutAdmin()
   stats.value = null
   earnToken.value = ''
+  scanSuccessMsg.value = ''
+  if (pollInterval) clearInterval(pollInterval)
+  router.push('/giris')
 }
 
 onMounted(() => {
-  if (auth.adminToken) loadAdminData().catch(() => auth.logoutAdmin())
+  if (auth.adminToken) {
+    loadAdminData().catch(() => auth.logoutAdmin())
+  } else {
+    router.push('/giris')
+  }
+})
+
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval)
 })
 </script>

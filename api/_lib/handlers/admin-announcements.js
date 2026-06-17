@@ -46,5 +46,17 @@ export async function adminAnnouncements(req, res) {
     return json(res, 200, { announcement: rows[0] })
   }
 
+  if (req.method === 'DELETE') {
+    const { id } = await readBody(req)
+    if (!id) return json(res, 400, { error: 'ID gerekli' })
+    const rows = await sql`
+      DELETE FROM announcements
+      WHERE id = ${id}
+      RETURNING id
+    `
+    if (!rows[0]) return json(res, 404, { error: 'Duyuru bulunamadı' })
+    return json(res, 200, { message: 'Duyuru silindi', id: rows[0].id })
+  }
+
   return methodNotAllowed(res)
 }

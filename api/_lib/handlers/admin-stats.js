@@ -12,8 +12,8 @@ export async function adminStats(req, res) {
 
   const today = await sql`
     SELECT
-      COUNT(*) FILTER (WHERE action = 'QR_CREATED')::int AS qr_today,
-      COALESCE(SUM(beans_total) FILTER (WHERE action = 'QR_CREATED'), 0)::int AS beans_today,
+      COUNT(*) FILTER (WHERE action = 'QR_SCANNED')::int AS qr_today,
+      COALESCE(SUM(beans_total) FILTER (WHERE action = 'QR_SCANNED'), 0)::int AS beans_today,
       COUNT(*) FILTER (WHERE action = 'REDEEMED_COFFEE')::int AS redeems_today
     FROM cashier_audit
     WHERE admin_id = ${auth.sub} AND created_at >= CURRENT_DATE

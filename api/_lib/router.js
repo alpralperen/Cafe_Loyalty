@@ -11,6 +11,8 @@ import { adminQrCreate } from './handlers/admin-qr-create.js'
 import { adminRedeemScan } from './handlers/admin-redeem-scan.js'
 import { adminAnnouncements } from './handlers/admin-announcements.js'
 import { adminStats } from './handlers/admin-stats.js'
+import { adminQrStatus } from './handlers/admin-qr-status.js'
+import { managerCashiers } from './handlers/manager-cashiers.js'
 import { announcementsPublic } from './handlers/announcements-public.js'
 import { json } from './http.js'
 
@@ -30,7 +32,11 @@ const routes = {
   'GET admin/announcements': adminAnnouncements,
   'POST admin/announcements': adminAnnouncements,
   'PUT admin/announcements': adminAnnouncements,
+  'DELETE admin/announcements': adminAnnouncements,
   'GET admin/stats': adminStats,
+  'GET admin/qr-status': adminQrStatus,
+  'GET manager/cashiers': managerCashiers,
+  'POST manager/cashiers': managerCashiers,
   'GET announcements/public': announcementsPublic
 }
 

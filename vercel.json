@@ -5,6 +5,16 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api?path=$1" },
-    { "source": "/((?!api).*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "(?i).*text/html.*"
+        }
+      ],
+      "destination": "/index.html"
+    }
   ]
 }

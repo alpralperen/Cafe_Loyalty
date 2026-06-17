@@ -1,27 +1,27 @@
 <template>
   <div>
-    <header style="margin-bottom: 1.25rem">
-      <p class="page-eyebrow">Kasadaki kod</p>
-      <h1 class="page-title">QR tara</h1>
-      <p class="muted" style="margin-top: 0.35rem">Tek kullanımlık çekirdek kodunu okutun.</p>
+    <header class="top-bar-custom">
+      <h1 class="greeting">Merhaba {{ firstName }}</h1>
+      <AppLogo class="mini-logo" />
     </header>
 
     <div class="card">
       <div v-if="error" class="alert alert-error">{{ error }}</div>
       <div v-if="success" class="alert alert-success">{{ success }}</div>
       <QrScanner v-if="!success" hint="QR kodu çerçeveye hizalayın" @scan="onScan" />
-      <router-link to="/panel" class="btn btn-outline" style="margin-top: 1rem">Panele dön</router-link>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import QrScanner from '../../components/QrScanner.vue'
+import AppLogo from '../../components/AppLogo.vue'
 import { api } from '../../api/client'
 import { useAuthStore } from '../../stores/auth'
 
 const auth = useAuthStore()
+const firstName = computed(() => auth.user?.name_surname?.split(' ')[0] || 'Misafir')
 const error = ref('')
 const success = ref('')
 let busy = false

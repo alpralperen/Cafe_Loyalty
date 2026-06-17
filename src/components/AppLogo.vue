@@ -1,17 +1,13 @@
 <template>
   <span class="logo" :class="{ compact }" aria-hidden="true">
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="1.2" opacity="0.35" />
-      <path
-        d="M11 14c0-3 2.2-5 5-5s5 2 5 5v2c0 4-2.5 6-5 6s-5-2-5-6v-2z"
-        stroke="currentColor"
-        stroke-width="1.4"
-        stroke-linecap="round"
-      />
-      <ellipse cx="16" cy="21" rx="5" ry="2" fill="currentColor" opacity="0.85" />
-      <circle cx="16" cy="10" r="1.2" fill="currentColor" />
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+      <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+      <line x1="6" y1="2" x2="6" y2="4" />
+      <line x1="10" y1="2" x2="10" y2="4" />
+      <line x1="14" y1="2" x2="14" y2="4" />
     </svg>
-    <span v-if="!compact" class="logo-text">Kafe Sadakat</span>
+    <span v-if="!compact" class="logo-text">Cafe Loyalty</span>
   </span>
 </template>
 

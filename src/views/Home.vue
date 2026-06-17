@@ -1,8 +1,9 @@
 <template>
   <div>
-    <section class="card card-highlight hero">
+    <section class="card card-highlight hero" style="text-align: center; display: flex; flex-direction: column; align-items: center; padding: 3rem 1.5rem;">
+      <AppLogo style="transform: scale(1.6); margin-bottom: 2rem;" />
       <p class="page-eyebrow">Dijital sadakat</p>
-      <h1>Kahveniz,<br />çekirdekleriniz.</h1>
+      <h1 style="margin-top: 0.5rem;">Kahveniz,<br />çekirdekleriniz.</h1>
       <p class="muted">
         Kart taşımadan biriktirin. Her 10 çekirdekte bir fincan bizden.
       </p>
@@ -34,6 +35,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { api } from '../api/client'
+import AppLogo from '../components/AppLogo.vue'
 
 const auth = useAuthStore()
 const announcements = ref([])

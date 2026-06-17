@@ -29,16 +29,13 @@ export async function adminQrCreate(req, res) {
     VALUES (${id}, ${amount}, ${auth.sub}, NOW() + ${ttl} * INTERVAL '1 minute')
   `
 
-  await sql`
-    INSERT INTO cashier_audit (admin_id, action, beans_total, meta)
-    VALUES (${auth.sub}, 'QR_CREATED', ${amount}, ${JSON.stringify({ qr_id: id })})
-  `
+
 
   const today = await sql`
     SELECT COUNT(*)::int AS qr_count, COALESCE(SUM(beans_total), 0)::int AS beans_today
     FROM cashier_audit
     WHERE admin_id = ${auth.sub}
-      AND action = 'QR_CREATED'
+      AND action = 'QR_SCANNED'
       AND created_at >= CURRENT_DATE
   `
   const stats = today[0]

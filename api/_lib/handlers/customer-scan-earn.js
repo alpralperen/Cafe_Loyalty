@@ -20,7 +20,7 @@ export async function customerScanEarn(req, res) {
     WHERE id = ${token}
       AND status = 'active'
       AND expires_at > NOW()
-    RETURNING id, beans_amount
+    RETURNING id, beans_amount, created_by
   `
   const qr = claimed[0]
   if (!qr) {
@@ -37,6 +37,15 @@ export async function customerScanEarn(req, res) {
     UPDATE users
     SET beans_count = ${next.beans_count}, free_coffees = ${next.free_coffees}
     WHERE id = ${auth.sub}
+  `
+
+  console.log('--- EXECUTING customerScanEarn ---');
+  console.log('qr.created_by:', qr.created_by);
+  console.log('qr.beans_amount:', qr.beans_amount);
+  
+  await sql`
+    INSERT INTO cashier_audit (admin_id, action, beans_total, meta)
+    VALUES (${qr.created_by}, 'QR_SCANNED', ${qr.beans_amount}, ${JSON.stringify({ qr_id: qr.id, user_id: auth.sub })})
   `
 
   const desc = `${qr.beans_amount} Adet Kahve — ${new Date().toLocaleDateString('tr-TR')}`

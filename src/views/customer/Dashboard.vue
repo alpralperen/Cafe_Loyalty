@@ -1,8 +1,8 @@
 <template>
   <div>
-    <header style="margin-bottom: 1.25rem">
-      <p class="page-eyebrow">Hoş geldin</p>
-      <h1 class="page-title">{{ firstName }}</h1>
+    <header class="top-bar-custom">
+      <h1 class="greeting">Merhaba {{ firstName }}</h1>
+      <AppLogo class="mini-logo" />
     </header>
 
     <div class="card card-highlight">
@@ -26,15 +26,9 @@
     <div v-if="message" class="alert alert-success">{{ message }}</div>
     <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-    <div class="card">
-      <h2>İşlemler</h2>
-      <div class="btn-stack">
-        <router-link to="/tara" class="btn btn-primary">QR tara — çekirdek kazan</router-link>
-        <button class="btn btn-accent" :disabled="!profile?.free_coffees" @click="useCoffee">
-          Kahvemi kullan
-        </button>
-      </div>
-    </div>
+      <button class="btn btn-outline" style="width: 100%; border-radius: 99px; margin-top: 1.5rem" :disabled="!profile?.free_coffees" @click="useCoffee">
+        Hediye kahve kullanmak için
+      </button>
 
     <div v-if="redeemToken" class="card card-highlight">
       <p class="page-eyebrow">Kasiyere gösterin</p>
@@ -59,6 +53,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import AppLogo from '../../components/AppLogo.vue'
 import QrDisplay from '../../components/QrDisplay.vue'
 import BeanProgress from '../../components/BeanProgress.vue'
 import { api } from '../../api/client'

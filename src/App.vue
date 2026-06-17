@@ -5,15 +5,13 @@
         <AppLogo />
       </router-link>
       <nav class="top-nav" aria-label="Ana menü">
-        <router-link v-if="!auth.isLoggedIn" to="/giris">Giriş</router-link>
-        <router-link v-if="!auth.isLoggedIn" to="/kayit">Kayıt</router-link>
         <router-link v-if="auth.isLoggedIn" to="/panel">Panel</router-link>
-        <router-link to="/kasiyer">Kasiyer</router-link>
       </nav>
     </header>
-    <main class="main-content">
+    <main class="main-content" :class="{ 'with-bottom-nav': showBottomNav }">
       <router-view />
     </main>
+    <BottomNav v-if="showBottomNav" />
   </div>
 </template>
 
@@ -22,9 +20,15 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import AppLogo from './components/AppLogo.vue'
+import BottomNav from './components/BottomNav.vue'
 
 const route = useRoute()
 const auth = useAuthStore()
 
-const showHeader = computed(() => !route.meta.hideHeader)
+// Hide header for customer auth pages and app pages (panel, tara, firsatlar, home)
+const hideHeaderRoutes = ['home', 'login', 'register', 'dashboard', 'scan', 'offers']
+const showHeader = computed(() => !route.meta.hideHeader && !hideHeaderRoutes.includes(route.name))
+
+const bottomNavRoutes = ['dashboard', 'scan', 'offers']
+const showBottomNav = computed(() => bottomNavRoutes.includes(route.name))
 </script>

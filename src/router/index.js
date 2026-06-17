@@ -12,6 +12,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/firsatlar',
+    name: 'offers',
+    component: () => import('../views/customer/Offers.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/tara',
     name: 'scan',
     component: () => import('../views/customer/Scan.vue'),
@@ -21,7 +27,13 @@ const routes = [
     path: '/kasiyer',
     name: 'admin',
     component: () => import('../views/admin/Dashboard.vue'),
-    meta: { hideHeader: true }
+    meta: { hideHeader: true, requiresAdmin: true }
+  },
+  {
+    path: '/yonetici',
+    name: 'manager',
+    component: () => import('../views/manager/Dashboard.vue'),
+    meta: { hideHeader: true, requiresAdmin: true }
   }
 ]
 
@@ -34,6 +46,9 @@ router.beforeEach((to) => {
   const auth = useAuthStore()
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
     return { name: 'login', query: { redirect: to.fullPath } }
+  }
+  if (to.meta.requiresAdmin && !auth.adminToken) {
+    return { name: 'login' }
   }
 })
 
