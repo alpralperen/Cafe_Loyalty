@@ -66,7 +66,6 @@ const beansUntilFree = ref(10)
 const logs = ref([])
 const message = ref('')
 const error = ref('')
-const error = ref('')
 const redeemToken = ref('')
 const redeemTtl = ref(120)
 let pollInterval = null
